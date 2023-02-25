@@ -1,0 +1,103 @@
+spring:
+  application:
+    name: main-application
+
+  main:
+    allow-circular-references: true
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/java_thaycuong_pro4
+    username: root
+    password: root@123
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show-sql: false
+
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    generate-ddl: true
+    defer-datasource-initialization: true
+
+  servlet:
+    multipart:
+      #      Max size of 1 file that we upload to server backend
+      max-file-size: 10MB
+      #      Max size of 1 request from client to server backend
+      #      an example, 1 request that contain many files, and params but total size of those
+      #      must be less than 20MB
+      max-request-size: 20MB
+
+# config for multi languages: using messageSource
+  messages:
+    basename: lang/message
+    encoding: UTF-8
+
+  kafka:
+    consumer:
+      auto-offset-reset: latest
+      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+      #    bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+#      bootstrap-servers: 172.20.10.4:9092
+    producer:
+      retries: 1
+      acks: -1
+      properties:
+        #        prevent duplidate event in more than 1 partitions
+        '[enable.idempotence]': true
+        '[request.timeout.ms]': 2000
+        #        Idempotence: prevent duplidated event only work when requests < 5 per sonnections.
+        '[max.in.flight.request.per.connecting]': 5
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+#      bootstrap-servers: 172.20.10.4:9092
+    bootstrap-servers: localhost:9092
+#    bootstrap-servers: 172.20.10.4:9092
+
+# swagger
+springdoc:
+  swagger-ui:
+    path: /sw
+  api-docs:
+    path: /sw-api
+
+security:
+  path:
+    ignored: /swagger-ui/index.html,/sw,/home,/login-custom
+
+jwt:
+  secret-key: quanzip
+
+  #  # config for eureka server
+#  eureka:
+#    client:
+#      serviceUrl:
+#        defaultZone: http://localhost:9999/eureka
+#    instance:
+#      prefer-ip-adress: true
+
+  #config for logging
+  # tree: buttom: debug - info - warning - error - fatal
+logging:
+  level:
+    #   Neu de ROOT: info => log ra FILE or CONSOLE chi co log muc INFO tro di (info, warning, error, fatal)
+    #       thuong dung khi dang debug tai local
+    #   Neu de ROOT: error => Khi log ra file or log ra console co cac log muc error tro di ( error, fatal)
+    #       thuong ap dung cho server, production de giam thieu cac log can ghi cho server.
+    ROOT: info
+  file:
+    #    Tên file log
+    name: logs/be.log
+  logback:
+    rollingpolicy:
+      #      kích thước file tối đa, vượt quá sẽ dừng và lưu sang file mới
+      max-file-size: 3MB
+      #      Số lượng ngay toi da luu file log tinh theo ngay file log do dc tao
+      max-history: 15
+server:
+  port: 9081
+
+app:
+  productImageFolder: ./image/product
+  userImageFolder: ./image/user

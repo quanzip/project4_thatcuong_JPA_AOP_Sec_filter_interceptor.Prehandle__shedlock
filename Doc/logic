@@ -1,0 +1,9 @@
+-project sd cho viec cung cap api cua user, bill, product, billItem,
+-da tich hop security, kafka, docker
+-da tich hop multi language
+- gioi thieu co che autowire cho cac thuoc tinh la bean be trong  cho 1 class ban than no khoophai bean
+xem tai class TestAutoWirePropertiesNonBean
+
+schedule de xoa cac billitem cos quantity = 0;
+
+Lôi: chưa chạy được ứng dụng sau khi thêm filter cho security (security chỉ dùng filter, không dùng interceptor)
