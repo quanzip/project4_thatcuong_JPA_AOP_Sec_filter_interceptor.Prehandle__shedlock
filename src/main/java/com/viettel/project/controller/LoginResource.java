@@ -44,7 +44,7 @@ public class LoginResource {
     }
 
     @GetMapping(value = "/home")
-    public String  goToHomePage(){
+    public String goToHomePage(){
         return "You get to home";
     }
 

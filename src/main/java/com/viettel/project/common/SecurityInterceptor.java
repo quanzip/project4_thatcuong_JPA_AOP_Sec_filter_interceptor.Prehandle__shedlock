@@ -68,7 +68,6 @@ public class SecurityInterceptor implements HandlerInterceptor {
 
         List<String> ignores = Arrays.asList(ignoredPaths.split(","));
         if (ignores.contains(path)) return true;
-//      isgoing
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Authority authority = authorityService.findByPathAndMethodAndStatus(path, method);
@@ -78,26 +77,27 @@ public class SecurityInterceptor implements HandlerInterceptor {
 //        in case of api has not been configed in database table: authority.
         if (Objects.isNull(authority)) {
             if (!isAuthenticated(authentication)) {
+                 response.sendError(401, "UnAuthenticated request");
                 throw new AccessDeniedException("You need to be authenticated to access this function");
             }
             return true;
         } else {
             String roleOfCurrentPath = authority.getAuthority();
-            // we should use JAVA REGEX to compare path in this case,
-            // vd if path.matches("/user/**"), equal can not solve this case
-            if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken)) {
+            if (isAuthenticated(authentication)) {
 //                Get role of current logined user
                 List<String> roles = authentication.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority).collect(Collectors.toList());
-                if (!roles.contains(roleOfCurrentPath))
+                if (!roles.contains(roleOfCurrentPath) && !roles.get(0).equals("ROLE_ADMIN")){
+                    response.sendError(403, "Not enough roles");
                     throw new AccessDeniedException("You need to have role coresponding to access this function" + path + ", method: " + method + ", require role: " + roleOfCurrentPath + ", role user: " + roles);
+                }
             } else {
+                response.sendError(401, "UnAuthenticated request");
                 throw new AccessDeniedException("You need to have role coresponding to access this function: " + path + ", method: " + method + ", require role: " + roleOfCurrentPath + ", user is not authenticated");
             }
         }
 
         return true; // mean request is valid to run
-//        false mean request is not enough roles to perform continue
     }
 
     private boolean isAuthenticated(Authentication authentication) {

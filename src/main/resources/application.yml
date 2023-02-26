@@ -63,6 +63,7 @@ springdoc:
     path: /sw-api
 
 security:
+  api-key: product-service
   path:
     ignored: /swagger-ui/index.html,/sw,/home,/login-custom
 

@@ -19,6 +19,7 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import java.nio.charset.Charset;
 import java.util.List;
@@ -42,9 +43,6 @@ public class ScheduledTasks {
     @Autowired
     private BillItemService billItemService;
 
-    @Autowired
-    private AuthorityService authorityService;
-
     // s m h d M Thứ
     @Scheduled(cron = "0 0 0/3 * * *")
     @SchedulerLock(name = "clean_bill_item", lockAtLeastFor = 2000, lockAtMostFor = 4000)
@@ -58,11 +56,9 @@ public class ScheduledTasks {
 //      https://www.baeldung.com/rest-template
 //      https://www.baeldung.com/how-to-use-resttemplate-with-basic-authentication-in-spring
 
-    @Scheduled(cron = "0 0 0/2 * * *")
-    @SchedulerLock(name = "import_paths_and_roles")
+//    @Scheduled(cron = "0 0/1 * * * *")
+//    @SchedulerLock(name = "import_paths_and_roles", lockAtMostFor = 40000, lockAtLeastFor = 20000)
     public void importPathsAndRoles(){
-        authorityService.deleteAll();
-
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity httpEntity = new HttpEntity(createHeaders("quanzip", "123"));
         ResponseEntity<Integer> result = restTemplate.exchange("http://localhost:9081/sapis", HttpMethod.GET, httpEntity, Integer.class);
@@ -70,7 +66,8 @@ public class ScheduledTasks {
             logger.info("\n----------------------------re-import all apis and role to Database------------------------");
         }
     }
-    // call Api with basic authen
+
+    // call Api with basic authen úing rést tepmlate
     HttpHeaders createHeaders(String username, String password) {
         return new HttpHeaders() {{
             String auth = username + ":" + password;

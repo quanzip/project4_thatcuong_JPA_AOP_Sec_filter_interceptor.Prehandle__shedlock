@@ -85,7 +85,7 @@ public class JwtServiceImpl implements JwtService {
         // it will also validate token to be valid or not
         try{
 //            return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
-            return Jwts.parser().parseClaimsJws(token).getBody().getSubject(); // if this can not help,
+            return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject(); // if this can not help,
             // consider using above line to get subject.
         }catch (Exception e){
             throw new AccessDeniedException("Token iinvalid");

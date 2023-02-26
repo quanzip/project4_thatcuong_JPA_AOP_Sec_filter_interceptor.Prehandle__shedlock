@@ -34,6 +34,7 @@ public class SwaggerController {
 
     @GetMapping(value = "/sapis")
     public void getAllSwaggerPaths(){
+        authorityService.deleteAll();
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity httpEntity = new HttpEntity(createHeaders("quanzip", "123"));
 
